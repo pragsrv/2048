@@ -132,3 +132,86 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Merge tiles based on the 2048 game rules
+    function mergeTiles(values) {
+        const newValues = [];
+        for (let i = 0; i < values.length; i++) {
+            if (values[i] === values[i + 1]) {
+                newValues.push(values[i] * 2);
+                score += values[i] * 2;
+                i++;
+            } else {
+                newValues.push(values[i]);
+            }
+        }
+        return newValues.filter(value => value).concat(Array(4 - newValues.length).fill(0));
+    }
+
+    // Get the background color for a tile value
+    function getTileColor(value) {
+        switch (value) {
+            case 2: return '#eee4da';
+            case 4: return '#ede0c8';
+            case 8: return '#f2b179';
+            case 16: return '#f59563';
+            case 32: return '#f67c5f';
+            case 64: return '#f65e3b';
+            case 128: return '#edcf72';
+            case 256: return '#edcc61';
+            case 512: return '#edc850';
+            case 1024: return '#edc53f';
+            case 2048: return '#edc22e';
+            default: return '#cdc1b4';
+        }
+    }
+
+    // Update the score display
+    function updateScore(newScore) {
+        score = newScore;
+        scoreDisplay.innerHTML = `Score: ${score}`;
+        if (score > highScore) {
+            highScore = score;
+            highScoreDisplay.innerHTML = `High Score: ${highScore}`;
+            saveHighScore(highScore);
+        }
+    }
+
+    // Check if the game is over (no more possible moves)
+    function isGameOver() {
+        if (cells.some(cell => !cell.innerHTML)) return false;
+
+        for (let row = 0; row < 4; row++) {
+            for (let col = 0; col < 4; col++) {
+                const cell = cells[row * 4 + col];
+                const value = parseInt(cell.innerHTML);
+                if ((row > 0 && value === parseInt(cells[(row - 1) * 4 + col].innerHTML)) ||
+                    (row < 3 && value === parseInt(cells[(row + 1) * 4 + col].innerHTML)) ||
+                    (col > 0 && value === parseInt(cells[row * 4 + col - 1].innerHTML)) ||
+                    (col < 3 && value === parseInt(cells[row * 4 + col + 1].innerHTML))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Check if 2048 tile is achieved
+    function check2048() {
+        if (cells.some(cell => parseInt(cell.innerHTML) === 2048)) {
+            congratulationsDisplay.classList.remove('hidden');
+        }
+    }
+
+    // Reset the game
+    function resetGame() {
+        cells.forEach(cell => {
+            cell.innerHTML = '';
+            cell.style.backgroundColor = '#cdc1b4';
+        });
+        gameOverDisplay.classList.add('hidden');
+        congratulationsDisplay.classList.add('hidden');
+        score = 0;
+        updateScore(score);
+        initGame();
+    }
+
