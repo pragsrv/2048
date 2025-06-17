@@ -215,3 +215,110 @@ document.addEventListener('DOMContentLoaded', () => {
         initGame();
     }
 
+    // AI Move: Make a move based on a simple strategy
+    function aiMove() {
+        const directions = ['up', 'down', 'left', 'right'];
+        const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+        moveTiles(randomDirection);
+    }
+
+    // Save the current game state to localStorage
+    function saveGame() {
+        const gameState = cells.map(cell => cell.innerHTML);
+        localStorage.setItem('2048-gameState', JSON.stringify(gameState));
+        localStorage.setItem('2048-score', score);
+        localStorage.setItem('2048-highScore', highScore);
+        localStorage.setItem('2048-timer', seconds);
+    }
+
+    // Load the game state from localStorage
+    function loadGame() {
+        const savedGameState = JSON.parse(localStorage.getItem('2048-gameState'));
+        const savedScore = parseInt(localStorage.getItem('2048-score'));
+        const savedHighScore = parseInt(localStorage.getItem('2048-highScore'));
+        const savedTimer = parseInt(localStorage.getItem('2048-timer'));
+
+        if (savedGameState && savedScore >= 0) {
+            cells.forEach((cell, index) => {
+                cell.innerHTML = savedGameState[index];
+                cell.style.backgroundColor = getTileColor(savedGameState[index]);
+            });
+            updateScore(savedScore);
+            if (savedHighScore) {
+                highScore = savedHighScore;
+                highScoreDisplay.innerHTML = `High Score: ${highScore}`;
+            }
+            if (savedTimer >= 0) {
+                seconds = savedTimer;
+                updateTimerDisplay();
+                startTimer();
+            }
+        }
+    }
+
+    // Save the high score to localStorage
+    function saveHighScore(score) {
+        localStorage.setItem('2048-highScore', score);
+    }
+
+    // Load the high score from localStorage
+    function loadHighScore() {
+        const savedHighScore = parseInt(localStorage.getItem('2048-highScore'));
+        if (savedHighScore) {
+            highScore = savedHighScore;
+            highScoreDisplay.innerHTML = `High Score: ${highScore}`;
+        }
+    }
+
+    // Save the leaderboard to localStorage
+    function saveLeaderboard() {
+        const leaderboardScores = JSON.parse(localStorage.getItem('2048-leaderboard')) || [];
+        leaderboardScores.push({ score, time: seconds });
+        leaderboardScores.sort((a, b) => b.score - a.score || a.time - b.time);
+        if (leaderboardScores.length > 5) leaderboardScores.pop();
+        localStorage.setItem('2048-leaderboard', JSON.stringify(leaderboardScores));
+        displayLeaderboard();
+    }
+
+    // Load the leaderboard from localStorage
+    function loadLeaderboard() {
+        const leaderboardScores = JSON.parse(localStorage.getItem('2048-leaderboard')) || [];
+        displayLeaderboard(leaderboardScores);
+    }
+
+    // Display the leaderboard
+    function displayLeaderboard(leaderboardScores = []) {
+        leaderboard.innerHTML = '';
+        leaderboardScores.forEach((entry, index) => {
+            const listItem = document.createElement('li');
+            listItem.innerText = `${index + 1}. Score: ${entry.score}, Time: ${pad(Math.floor(entry.time / 60))}:${pad(entry.time % 60)}`;
+            leaderboard.appendChild(listItem);
+        });
+    }
+
+    // Event listeners
+    resetButton.addEventListener('click', resetGame);
+    undoButton.addEventListener('click', undoMove);
+    aiButton.addEventListener('click', aiMove);
+    saveButton.addEventListener('click', saveGame);
+    loadButton.addEventListener('click', loadGame);
+
+    document.addEventListener('keydown', event => {
+        switch (event.key) {
+            case 'ArrowUp':
+                moveTiles('up');
+                break;
+            case 'ArrowDown':
+                moveTiles('down');
+                break;
+            case 'ArrowLeft':
+                moveTiles('left');
+                break;
+            case 'ArrowRight':
+                moveTiles('right');
+                break;
+        }
+    });
+
+    initGame();
+});

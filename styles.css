@@ -23,16 +23,35 @@
 }
 
 #score-container {
-    margin-bottom: 10px;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
     width: 100%;
 }
 
 #score, #high-score, #timer {
-    font-size: 24px;
+    font-size: 20px;
     color: #776e65;
+    flex: 1 1 100px;
+    text-align: center;
 }
+
+#reset-button, #undo-button, #ai-button, #save-button, #load-button {
+    background-color: #8f7a66;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    padding: 5px 10px;
+    cursor: pointer;
+    flex: 1 1 100px;
+    min-width: 100px;
+    text-align: center;
+}
+
 
 #reset-button, #undo-button, #ai-button, #save-button, #load-button {
     background-color: #8f7a66;
