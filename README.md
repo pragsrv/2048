@@ -5,7 +5,8 @@ This is an enhanced version of the classic **2048 Game**, developed using HTML, 
 
 ---
 
-## Output
+## Output 
+![ezgif-3960dc547a8542](https://github.com/user-attachments/assets/dcaeb487-7535-4801-bbb1-6431389903c7)
 
 ---
 
